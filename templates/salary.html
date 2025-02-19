@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salary Calculation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 600px;
+            background: white;
+            margin: 50px auto;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        h2 {
+            color: #160753;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #160753;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 15px;
+            background-color: #1e097a;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .back-link:hover {
+            background-color: #f5a623;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Salary Calculation</h2>
+        <table>
+            <tr>
+                <th>Name</th>
+                <th>Position</th>
+                <th>Total Days</th>
+                <th>Salary</th>
+            </tr>
+            {% for data in salary_data %}
+            <tr>
+                <td>{{ data.name }}</td>
+                <td>{{ data.position }}</td>
+                <td>{{ data.total_days }}</td>
+                <td>₹{{ data.salary }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        <a class="back-link" href="/employee">← Back</a>
+    </div>
+</body>
+</html>

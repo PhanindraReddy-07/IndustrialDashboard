@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehicle Inventory</title>
+    <link rel="stylesheet" href="static/css/style1.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #160753;
+            padding: 10px 20px;
+            color: white;
+        }
+        header img {
+            height: 50px;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 1.8em;
+        }
+        header button {
+            padding: 8px 16px;
+            background-color: #f5a623;
+            border: none;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        header button:hover {
+            background-color: #d28c1a;
+        }
+        h2 {
+            text-align: center;
+            margin-top: 20px;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        form input, form button {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        form button {
+            background-color: #160753;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        form button:hover {
+            background-color: #1e097a;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #160753;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <p></p>
+        <!--<a href="/dashboard"><img src="logo.png" alt="Logo"></a>-->
+        <h1>RMD Group Of Industries(DashBoard)</h1>
+        <p></p>
+        <!--<button onclick="logout()">Logout</button>-->
+    </header>
+    <button onclick="dprReport()">Dpr Report</button>
+    <h2>Vehicle Inventory</h2>
+    <form id="vehicleForm">
+        <input type="text" id="vehicle_number" placeholder="Vehicle Number" required>
+        <input type="number" id="odo_meter" placeholder="Odo Meter" required>
+        <input type="number" id="tare_weight" placeholder="Tare Weight" required>
+        <input type="number" id="load_weight" placeholder="Load Weight" required>
+        <input type="number" id="diesel_issued" placeholder="Diesel Issued" required>
+        <button type="submit">Add Vehicle</button>
+    </form>
+    <table>
+        <thead>
+            <tr>
+                <th>S.No.</th>
+                <th>Vehicle Number</th>
+                <th>Odo Meter</th>
+                <th>Tare Weight</th>
+                <th>Load Weight</th>
+                <th>Diesel Issued</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="inventoryTable"></tbody>
+    </table>
+    <script>
+        document.getElementById('vehicleForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const vehicle = {
+                vehicle_number: document.getElementById('vehicle_number').value,
+                odo_meter: document.getElementById('odo_meter').value,
+                tare_weight: document.getElementById('tare_weight').value,
+                load_weight: document.getElementById('load_weight').value,
+                diesel_issued: document.getElementById('diesel_issued').value
+            };
+            const response = await fetch('/add_vehicle', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(vehicle)
+            });
+            if (response.ok) location.reload();
+        });
+
+        async function fetchInventory() {
+            const response = await fetch('/get_dpr');
+            const data = await response.json();
+            const tableBody = document.getElementById('inventoryTable');
+            tableBody.innerHTML = '';
+            data.forEach(item => {
+                const row = `<tr>
+                    <td>${item.S_No}</td>
+                    <td>${item.vehicle_number}</td>
+                    <td>${item.odo_meter}</td>
+                    <td>${item.tare_weight}</td>
+                    <td>${item.load_weight}</td>
+                    <td>${item.diesel_issued}</td>
+                    <td>
+                        <button onclick="deleteVehicle('${item.S_No}')">Delete</button>
+                    </td>
+                </tr>`;
+                tableBody.innerHTML += row;
+            });
+        }
+
+        async function deleteVehicle(vehicle_number) {
+            const response = await fetch('/delete_vehicle', {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ "S_No":vehicle_number })
+            });
+            if (response.ok) location.reload();
+        }
+
+        document.addEventListener('DOMContentLoaded', fetchInventory);
+        function logout(){
+            localStorage.removeItem("username");
+            localStorage.removeItem("role");
+            window.location.href="/logout";
+        }
+        function dprReport(){
+            window.location.href='/dpr_report';
+        }
+    </script>
+</body>
+</html>

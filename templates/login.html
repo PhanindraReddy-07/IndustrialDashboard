@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login & Signup</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .form-container {
+            justify-content:center;
+            align-items:center;
+            max-width: 400px;
+            margin:20px 20px 20px 500px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        .hidden {
+            display: none;
+        }
+        .form-container h2 {
+            text-align: center;
+        }
+        .form-container button {
+            width: 100%;
+            padding: 5px;
+            margin-top: 10px;
+            background:#160753;
+            color:white;
+            font-size:18px;
+            font-family:'Dubai';
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        .form-container button:hover {
+            background: #2d1c89;
+        }
+        .form-container input {
+            margin-top: 3px;
+            height: 25px;
+            width: 100%;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        #signupRole {
+            width: 100%;
+            padding: 5px;
+            margin-top: 3px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .switch-link {
+            text-align: center;
+            margin-top: 10px;
+            color: blue;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #160753;
+            padding: 10px 20px;
+            color: white;
+        }
+        header img {
+            height: 50px;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 2em;
+        }
+        @media only screen and (max-width: 768px) {
+            header {
+                display: block;
+            }
+            header h1 {
+                margin: 3px;
+                font-size: 1.5em;
+            }
+            .form-container{
+                margin:20px;
+            }
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+        .fade-out {
+            animation: fadeOut 0.5s ease forwards;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="logo.png" alt="Logo">
+        <h1>RMD Group Of Industries (Dashboard)</h1>
+        <p></p>
+    </header>
+    <div class="form-container">
+        <!-- Login Form -->
+        <div id="loginForm">
+            <h2>Login</h2>
+            <form id="login" method="POST">
+                <label for="username">Username:</label>
+                <input type="text" id="loginUsername" name="username" required>
+                <br><br>
+                <label for="password">Password:</label>
+                <input type="password" id="loginPassword" name="password" required>
+                <br><br>
+                <button type="submit">Login</button>
+            </form>
+            <p class="switch-link" onclick="showSignup()">If not registered, please signup</p>
+        </div>
+
+        <!-- Signup Form -->
+        <div id="signupForm" class="hidden">
+            <h2>Signup</h2>
+            <form id="signup" method="POST">
+                <label for="username">Username:</label>
+                <input type="text" id="signupUsername" name="username" required>
+                <br><br>
+                <label for="password">Password:</label>
+                <input type="password" id="signupPassword" name="password" required>
+                <br><br>
+                <label for="role">Role:</label>
+                <select id="signupRole" name="role" required>
+                    <option value="admin">Admin</option>
+                    <option value="sub-admin">Sub-Admin</option>
+                </select>
+                <br><br>
+                <button type="submit">Signup</button>
+            </form>
+            <p class="switch-link" onclick="showLogin()">Already registered? Login</p>
+        </div>
+    </div>
+
+    <script>
+        function showSignup() {
+            const loginForm = document.getElementById("loginForm");
+            const signupForm = document.getElementById("signupForm");
+
+            loginForm.classList.add("fade-out");
+            setTimeout(() => {
+                loginForm.classList.add("hidden");
+                loginForm.classList.remove("fade-out");
+
+                signupForm.classList.remove("hidden");
+                signupForm.classList.add("fade-in");
+
+                setTimeout(() => signupForm.classList.remove("fade-in"), 500);
+            }, 500);
+        }
+
+        function showLogin() {
+            const loginForm = document.getElementById("loginForm");
+            const signupForm = document.getElementById("signupForm");
+
+            signupForm.classList.add("fade-out");
+            setTimeout(() => {
+                signupForm.classList.add("hidden");
+                signupForm.classList.remove("fade-out");
+
+                loginForm.classList.remove("hidden");
+                loginForm.classList.add("fade-in");
+
+                setTimeout(() => loginForm.classList.remove("fade-in"), 500);
+            }, 500);
+        }
+
+        // Existing JavaScript for handling forms
+        document.getElementById("login").addEventListener("submit", async function (e) {
+            e.preventDefault();
+            const username = document.getElementById("loginUsername").value;
+            const password = document.getElementById("loginPassword").value;
+
+            const response = await fetch("/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ username, password })
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+                localStorage.setItem("username", username);
+                localStorage.setItem("role", data.role);
+                alert(data.message);
+                window.location.href = "/dashboard";
+            } else {
+                alert(data.error);
+            }
+        });
+
+        document.getElementById("signup").addEventListener("submit", async function (e) {
+            e.preventDefault();
+            const username = document.getElementById("signupUsername").value;
+            const password = document.getElementById("signupPassword").value;
+            const role = document.getElementById("signupRole").value;
+
+            const response = await fetch("/signup", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ username, password, role })
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+                alert(data.message);
+                showLogin();
+            } else {
+                alert(data.error);
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RMD Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #160753;
+            padding: 10px 20px;
+            color: white;
+        }
+        header img {
+            height: 50px;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 1.8em;
+        }
+        header button {
+            padding: 8px 16px;
+            background-color: #f5a623;
+            border: none;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        header button:hover {
+            background-color: #d28c1a;
+        }
+        h2 {
+            text-align: center;
+            margin-top: 20px;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        form input, form button {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        form button {
+            background-color: #160753;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        form button:hover {
+            background-color: #1e097a;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="/dashboard"><img src="logo.png" alt="Logo"></a>
+        <h1>RMD Group Of Industries (Dashboard)</h1>
+        <button onclick="logout()">Logout</button>
+    </header>
+    <h2>Upload Project Details</h2>
+    <form id="uploadForm">
+        <input type="text" id="projectId" placeholder="Project ID" required>
+        <input type="text" id="projectBudget" placeholder="Project Budget" required>
+        <input type="text" id="location" placeholder="Location" required>
+        <input type="text" id="expenditure" placeholder="Expenditure" required>
+        <input type="text" id="income" placeholder="Income" required>
+        <button type="submit">Add Project</button>
+    </form>
+    <h2>Upload Inventory Details </h2>
+    <form id="inventoryForm">
+        <input type="text" id="itemID" placeholder="item ID" required>
+        <input type="text" id="itemName" placeholder="Item Name" required>
+        <input type="text" id="price" placeholder="Price" required>
+        <input type="text" id="quantity" placeholder="Quantity" required>
+        <input type="text" id="remarks" placeholder="Remarks" required>
+
+        <button type="submit">Add item</button>
+    </form>
+    <script>
+        function logout() {
+            localStorage.removeItem("username");
+            localStorage.removeItem("role");
+            window.location.href = "/logout";
+        }
+
+        document.getElementById("uploadForm").addEventListener("submit", async function (e) {
+            e.preventDefault(); // Prevent page refresh on form submission
+        
+            const projectId = document.getElementById("projectId").value.trim();
+            const projectBudget = document.getElementById("projectBudget").value.trim();
+            const location = document.getElementById("location").value.trim();
+            const expenditure = document.getElementById("expenditure").value.trim();
+            const income = document.getElementById("income").value.trim();
+        
+            const response = await fetch("/insertProject", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    projectId: projectId,
+                    projectBudget: projectBudget,
+                    location: location,
+                    expenditure: expenditure,
+                    income: income
+                }),
+            });
+        
+            const data = await response.json();
+            if (response.ok) {
+                alert(data.message);
+                document.getElementById("uploadForm").reset(); // Reset form on success
+            } else {
+                alert(data.error || "Failed to insert project details");
+            }
+        });
+        
+        document.getElementById("inventoryForm").addEventListener("submit", async function (e) {
+            e.preventDefault(); // Prevent page refresh
+        
+            const itemID = document.getElementById("itemID").value.trim();
+            const itemName = document.getElementById("itemName").value.trim();
+            const price = parseInt(document.getElementById("price").value.trim());
+            const quantity = parseInt(document.getElementById("quantity").value, 10);
+            const remarks = document.getElementById("remarks").value.trim();
+        
+            // Validate fields
+            if (!itemID || !itemName || isNaN(quantity) || quantity <= 0 || !remarks || isNaN(price)) {
+                alert("Please enter valid inventory details.");
+                return;
+            }
+        
+            try {
+                const response = await fetch("/insert-inventory", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ itemID, itemName, quantity, price, remarks }),
+                });
+        
+                const data = await response.json();
+                if (response.ok) {
+                    alert(data.message);
+                    document.getElementById("inventoryForm").reset(); // Reset form on success
+                } else {
+                    alert(data.error || "Failed to insert Inventory details");
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                alert("An error occurred while inserting inventory.");
+            }
+        });
+        
+    </script>
+</body>
+</html>

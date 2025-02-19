@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RMD Dashboard</title>
+    <link rel="stylesheet" href="static/css/style1.css">
+    <style>
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #160753;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        #filterForm select{
+            cursor:pointer;
+        }
+        /* Styling for filters */
+        form#filterForm {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 20px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        form#filterForm label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        form#filterForm select {
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 200px;
+        }
+        form#filterForm button {
+            margin-top:35px;
+            padding: 5px 5px;
+            background-color: #160753;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            height:30px;
+        }
+        form#filterForm button:hover {
+            background-color: #1e097a;
+        }
+        #redirects{
+            display:flex;
+            margin:10px;
+            padding-left:1000px;
+        }
+        
+        #redirects button{
+            text-decoration:none;
+            cursor:pointer;
+            font-size:1.1em;
+            font-weight:600;
+            color: #1e097a;
+            background:white;
+            padding:4px;
+            padding-left:6px;
+            margin:2px;
+            box-shadow:2px 2px 5px black;
+            border-radius:3px;
+            margin-left:6px;
+        }
+        #redirects button:hover{
+            color:rgb(255, 255, 255);
+            background:#1e097a;
+        }    
+        #pieChart {
+            width: 400px !important;
+            height: 400px !important;
+        }
+        
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #160753;
+            padding: 10px 20px;
+            color: white;
+        }
+        header img {
+            height: 50px;
+        }
+        header h1 {
+            margin: 0;
+            font-size:2em;
+        }
+        header button {
+            padding: 8px 16px;
+            background-color: #f5a623;
+            border: none;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        header button:hover {
+            background-color: #d28c1a;
+        }
+        #project-details{
+            display:flex;
+        }
+        #projectDetails{
+            display:flex;
+            justify-content:evenly;
+        }
+        #projectDetails div{
+            margin:20px;
+        }
+        @media only screen and (max-width:768px){
+            header{
+                display:block;
+            }
+            header h1 {
+                margin: 3px;
+                font-size:1.5em;
+            }
+            #redirects{
+                margin:20px;
+                padding-left:5px;
+                display:block;
+            }
+            #project-details{
+                display:block;
+            }
+            #projectDetails{
+                display:block;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="/dashboard"><img src="logo.png" alt="Logo"></a>
+        <h1>RMD Group Of Industries(DashBoard)</h1>
+        <button onclick="logout()">Logout</button>
+    </header>
+    <div id="redirects">
+        <button onclick="inventory()">Inventory</button>
+        <button onclick="dprReport()">DPR Report</button>
+        <button onclick="employeeDetails()">Employee Details</button>
+        <button onclick="dpr()">DPR</button>
+        <button onclick="/invoice">Invoice</button>
+        <button onclick="/dhs">DHS</button>
+    </div>   
+    <section>
+        <h2>Projects</h2>
+        <form id="filterForm">
+            <div>
+                <label for="projectId">Project ID:</label>
+                <select id="projectId" name="projectId">
+                    <option value="">-- Select --</option>
+                </select>
+            </div>
+
+            <div>
+                <label for="projectBudget">Project Budget:</label>
+                <select id="projectBudget" name="projectBudget">
+                    <option value="">-- Select --</option>
+                </select>
+            </div>
+
+            <div>
+                <label for="location">Location:</label>
+                <select id="location" name="location">
+                    <option value="">-- Select --</option>
+                </select>
+            </div>
+
+            <div>
+                <label for="expenditure">Expenditure:</label>
+                <select id="expenditure" name="expenditure">
+                    <option value="">-- Select --</option>
+                </select>
+            </div>
+
+            <div>
+                <label for="income">Income:</label>
+                <select id="income" name="income">
+                    <option value="">-- Select --</option>
+                </select>
+            </div>
+
+            <button type="button" onclick="applyFilters()">Apply Filters</button> 
+        </form>
+        
+
+        <table id="projects-table">
+            <thead>
+                <tr>
+                    <th>Project ID</th>
+                    <th>Project Budget</th>
+                    <th>Location</th>
+                    <th>Expenditure</th>
+                    <th>Income</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+        <div id="results">
+            <!-- Filtered projects will be displayed here -->
+        </div>
+<div id="project-details">        
+        <!-- Canvas element with a responsive width and fixed height -->
+<canvas id="pieChart"></canvas>
+
+<!-- Section to display additional project details -->
+<div id="projectDetails" style="justify-content:center; align-items:center; text-align:center; margin:0 padding:0px 5px;">
+    <div id="projectCount" style="background:orange; justify-content:center; align-items:center; text-align:center; height:150px; border-radius:14px;"></div>
+    <div id="amountCredited" style="background:orange; justify-content:center; align-items:center; text-align:center; height:150px; border-radius:14px;"></div>
+    <div id="balanceLeft" style="background:orange; justify-content:center; align-items:center; text-align:center; height:150px; border-radius:14px;"></div>
+</div>
+</div>
+<button onclick="upload()">Upload project</button>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    function logout(){
+        localStorage.removeItem("username");
+        localStorage.removeItem("role");
+        window.location.href="/logout";
+    }
+    async function fetchChartData() {
+        const filters = {
+            projectId: document.getElementById('projectId').value,
+            projectBudget: document.getElementById('projectBudget').value,
+            location: document.getElementById('location').value,
+            expenditure: document.getElementById('expenditure').value,
+            income: document.getElementById('income').value            
+        };
+
+        const response = await fetch('/get-chart-data', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(filters),
+        });
+
+        const data = await response.json();
+        displayProjectDetails(data); // Display project count and financial details
+        renderPieChart(data.totalExpenditure, data.totalIncome);
+    }
+
+    function displayProjectDetails(data) {
+        // Check if 'projects' key exists and is an array
+        const projectCount = data.projectCount;
+    
+        // Display number of projects
+        const projectCountElement = document.getElementById('projectCount');
+        projectCountElement.style.width="200px";
+        projectCountElement.innerHTML = `
+            <p style="color:#fff; padding:15px; margin-top:10px;">No. of Projects</p><hr>
+            <p style="font-weight:700;">${projectCount}</p>
+        `;
+    
+        // Display amount credited and balance left
+        const amountCreditedElement = document.getElementById('amountCredited');
+        const balanceLeftElement = document.getElementById('balanceLeft');
+        amountCreditedElement.style.width="200px";
+        balanceLeftElement.style.width="200px";
+
+        amountCreditedElement.innerHTML = `<p style="color:#fff; padding:15px; margin-top:10px;">Amount Credited: </p><hr>
+            <p style="font-weight:700;">₹${data.totalBudget}`;
+        balanceLeftElement.innerHTML = `<p style="color:#fff; padding:15px; margin-top:10px;">Balance Left: </p><hr>
+            <p style="font-weight:700;">₹${data.totalBudget-data.totalExpenditure}`;
+    }
+    
+
+    function renderPieChart(totalExpenditure, totalIncome) {
+        const ctx = document.getElementById('pieChart').getContext('2d');
+
+        // Destroy previous chart instance if it exists
+        if (window.pieChartInstance) {
+            window.pieChartInstance.destroy();
+        }
+
+        window.pieChartInstance = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ['Expenditure', 'Income'],
+                datasets: [{
+                    data: [totalExpenditure, totalIncome],
+                    backgroundColor: ['#FF6384', '#36A2EB'],
+                    hoverBackgroundColor: ['#FF6384', '#36A2EB']
+                }]
+            },
+            options: {
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    }
+                }
+            }
+        });
+    }
+        
+        // Fetch available filter options from the server
+        async function fetchOptions() {
+            const response = await fetch('/get-filter-options');
+            const options = await response.json();
+
+            populateDropdown('projectId', options.projectIds);
+            populateDropdown('projectBudget', options.projectBudgets);
+            populateDropdown('location', options.locations);
+            populateDropdown('expenditure', options.expenditures);
+            populateDropdown('income', options.incomes);
+        }
+
+        function populateDropdown(id, values) {
+            const select = document.getElementById(id);
+            values.forEach(value => {
+                const option = document.createElement('option');
+                option.value = value;
+                option.textContent = value;
+                option.style.cursor="pointer";
+                select.appendChild(option);
+            });
+        }
+
+        // Apply filters and fetch matching projects
+        async function applyFilters() {
+            const form = document.getElementById('filterForm');
+            const formData = new FormData(form);
+            const filters = Object.fromEntries(formData.entries());
+
+            const response = await fetch('/filter-projects', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(filters)
+            });
+            const data = await response.json();
+
+            const resultsDiv = document.getElementById('projects-table').querySelector('tbody');
+
+            resultsDiv.innerHTML = ''; // Clear previous results
+            if (data.length) {
+                data.forEach(project => {
+                    resultsDiv.innerHTML += `
+                            <tr><td> ${project.projectID}</td>
+                            <td>${project.projectBudget}</td>
+                            <td> ${project.location}</td>
+                            <td> ${project.expenditure}</td>
+                            <td> ${project.income}</td>
+                            </tr>
+                    `;
+                });
+            } else {
+                resultsDiv.innerHTML = '<tr><td colspan="5" style="text-align:center;">No projects match the filters.</td></tr>';
+            }
+            fetchChartData();
+        }
+
+        // Fetch options on page load
+        window.onload = fetchOptions;
+        function dprReport(){
+            window.location.href="/dpr_report";
+        }
+        function employeeDetails(){
+            window.location.href="/employee";
+        }
+        function dpr(){
+            window.location.href="/dpr";
+        }
+        function inventory(){
+            window.location.href="/inventory";
+        }
+        function upload(){
+            window.location.href="/upload";
+        }
+    </script>
+</body>
+</html>

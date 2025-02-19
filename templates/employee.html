@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 600px;
+            background: white;
+            margin: 50px auto;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        h2 {
+            color: #160753;
+            margin-bottom: 20px;
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #160753;
+            padding: 10px 20px;
+            color: white;
+        }
+        header img {
+            height: 50px;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 2em;
+        }
+        header button {
+            padding: 8px 16px;
+            background-color: #f5a623;
+            border: none;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        header button:hover {
+            background-color: #d28c1a;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        button {
+            background-color: #160753;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #1e097a;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #160753;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .links {
+            margin-top: 20px;
+        }
+
+        .links a {
+            text-decoration: none;
+            background-color: #1e097a;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin: 5px;
+            display: inline-block;
+        }
+
+        .links a:hover {
+            background-color: #f5a623;
+        }
+
+        @media only screen and (max-width:768px){
+            header{
+                display:block;
+            }
+            header h1 {
+                margin: 3px;
+                font-size:1.5em;
+            }
+        }    
+    </style>
+    <script>
+        function addEmployee(event) {
+            event.preventDefault(); // Prevent default form submission
+
+            const formData = new FormData(document.getElementById("employeeForm"));
+
+            fetch("/add_employee", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json()) // Expect JSON response
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert("Error adding employee");
+                }
+            })
+            .catch(error => console.error("Error:", error));
+        }
+    </script>
+</head>
+<body>
+    <header>
+        <a href="/dashboard"><img src="logo.png" alt="Logo"></a>
+        <h1>RMD Group Of Industries (DashBoard)</h1>
+        <button onclick="logout()">Logout</button>
+    </header>
+    <div class="container">
+        <h2>Employee List</h2>
+        <form id="employeeForm" onsubmit="addEmployee(event)">
+            <input type="text" name="name" placeholder="Employee Name" required>
+            <input type="text" name="position" placeholder="Position" required>
+            <input type="number" name="payout" placeholder="Payout per Day" required>
+            <button type="submit">Add Employee</button>
+        </form>
+
+        <table>
+            <tr>
+                <th>Name</th>
+                <th>Position</th>
+                <th>Payout</th>
+            </tr>
+            {% for emp in employees %}
+            <tr>
+                <td>{{ emp.name }}</td>
+                <td>{{ emp.position }}</td>
+                <td>{{ emp.payout }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+
+        <div class="links">
+            <a href="/attendance">Mark Attendance</a>
+            <a href="/calculate_salary">View Salary</a>
+        </div>
+    </div>
+</body>
+</html>
