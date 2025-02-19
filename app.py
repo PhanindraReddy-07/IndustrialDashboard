@@ -20,6 +20,7 @@ attendance_col=db["attendance"]
 dpr_collection=db["dpr"]
 diesel_collection=db["diesel"]
 
+#dashboard.html api calls
 @app.route("/get-filter-options", methods=["GET"])
 def get_filter_options():
     project_ids = projects_collection.distinct("projectID")
@@ -118,8 +119,6 @@ def add_employee():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
-
     
 # Attendance Page
 @app.route("/attendance")
@@ -316,7 +315,7 @@ def delete_inv_item():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-
+#Routings for templates 
 @app.route("/")
 def home():
     return render_template("login.html")
@@ -343,6 +342,7 @@ def employe():
     employees=emp_collection.find()
     return render_template("employee.html",employees=employees)
 
+#Login and Signup api's
 @app.route("/login", methods=["POST"])
 def login():
     data = request.json
@@ -387,7 +387,7 @@ def signup():
 
     return jsonify({"message": "Signup successful"}), 201
 
-
+#dpr api calls
 @app.route('/add_vehicle', methods=['POST'])
 def add_vehicle():
     try:
