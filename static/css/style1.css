@@ -1,0 +1,29 @@
+body{
+    overflow-x:hidden;
+    background-color: #ffffff;
+    font-family: 'Dubai';
+}
+header{
+    display:flex;
+    align-items:center;
+    justify-content: space-around;
+}
+button{
+    font-family: 'Dubai';
+    background: rgb(47, 218, 47);
+    color: #ffffff;
+    border: 2px solid white;
+    padding: 1px 5px;
+    font-size: 1.5em;
+    cursor: pointer;
+    transition: all 1s ease;
+}
+button:hover{
+    border-radius: 20px;
+    background: black;
+}
+@media only screen and (max-width:768px){
+    header{
+        display:block;
+    }
+}
