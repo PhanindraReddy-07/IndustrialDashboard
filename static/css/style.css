@@ -1,0 +1,21 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background:linear-gradient(90deg,rgba(4, 148, 4, 0.694),black);
+}
+
+h1 {
+    text-align: center;
+    margin-top: 20px;
+    color: #ffffff;
+}
+
+#container {
+    width: 100%;
+    height: calc(100vh - 50px);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+}
